@@ -5,7 +5,7 @@
       description="讲Excel中的数据逐条转成Word模板的文件。"
       type="warning" :closable="false">
     </el-alert>
-    <el-form :model="form" label-width="100px" class="mt-20">
+    <el-form :model="form" label-width="150px" class="mt-20">
       <el-form-item label="Excel数据表：">
         <el-upload
           v-if="form.excel == null"
@@ -32,6 +32,11 @@
         </el-upload>
         <div v-else><i class="el-icon-success"></i></div>
       </el-form-item>
+      <el-form-item label="导出Word命名：" v-if="form.excel && form.word">
+        <el-popover trigger="hover" content="规则：例*字段名**字段名*，即以*字段*包裹；如空值，则按系统默认规则。" placement="top">
+          <el-input slot="reference" v-model="form.exportWordName" placeholder="请输入导出Word命名规则"></el-input>
+        </el-popover>
+      </el-form-item>
       <el-form-item class="text-align-right" v-if="form.excel && form.word">
         <el-progress :percentage="percentage" v-if="percentage != 0"></el-progress>
         <span ref="downloadURL"></span>
@@ -47,6 +52,7 @@ import createReport from 'docx-templates';
 import JSZip from 'jszip';
 import XLSX from 'xlsx';
 import saveAs from './FileSaver.js';
+import { trimAll } from '@/utils/pattern';
 
 export default {
   name: 'ExcelToWord',
@@ -55,6 +61,7 @@ export default {
       form: {
         excel: null,
         word: null,
+        exportWordName: '',
       },
       percentage: 0,
     }
@@ -80,12 +87,14 @@ export default {
       this.form.excel = await this.readFileIntoArrayBuffer(item.file);
     },
     async uploadWord(item){
-      this.form.word = await this.readFileIntoArrayBuffer(item.file);
+      //this.form.word = await this.readFileIntoArrayBuffer(item.file);//有时报错待查
+      this.form.word = item.file.path;//路径
     },
     reset(){
       this.form = {
         excel: null,
         word: null,
+        exportWordName: '',
       };
       this.percentage = 0;
     },
@@ -107,45 +116,75 @@ export default {
         a.style = 'display: none';
         a.click();
         a.remove();
-      };*/
+      };
 
-      /*saveDataToFile(
+      let report = await createReport({
+          template: this.form.word,
+          data: {'项目姓名':'asd','学号':1212},
+        });
+
+      saveDataToFile(
         report,
         'report.docx',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       );*/
-
-      let workbook = XLSX.read(this.form.excel, {type: 'buffer'});
-      let fromTo = '';
-      let persons = [];
-      for (let sheet in workbook.Sheets) {
-        if (workbook.Sheets.hasOwnProperty(sheet)) {
-          fromTo = workbook.Sheets[sheet]['!ref'];
-          //console.log(fromTo);
-          persons = persons.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
-          break; // 如果只取第一张表，就取消注释这行
+      try{
+        let workbook = XLSX.read(this.form.excel, {type: 'buffer'});
+        let fromTo = '';
+        let persons = [];
+        for (let sheet in workbook.Sheets) {
+          if (workbook.Sheets.hasOwnProperty(sheet)) {
+            fromTo = workbook.Sheets[sheet]['!ref'];
+            //console.log(fromTo);
+            persons = persons.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
+            break; // 如果只取第一张表，就取消注释这行
+          }
         }
-      }
-      //console.log(persons);
+        //console.log(persons);
 
-      var zip = new JSZip();//创建zip对象
+        var zip = new JSZip();//创建zip对象
 
-      //excel逐条写入到word模板
-      for(let i=0; i<persons.length; i++){
-        let item = persons[i];
-        let report = await createReport({
-          template: this.form.word,
-          data: item,
-        });
-        zip.file(`${i}.doc`, report);
-        this.percentage = Math.floor(i/(persons.length-1)*100);
+        //excel逐条写入到word模板
+        for(let i=0; i<persons.length; i++){
+          let item = persons[i];
+          for(let key in item){
+            let val = item[key];
+            let newKey = trimAll(key);
+            delete item[key];
+            item[newKey] = val;
+          };
+          //console.log(item,JSON.stringify(this.form.word))
+          let report = await createReport({
+            output: 'buffer',
+            template: this.form.word,
+            data: item,
+          });
+          if(this.form.exportWordName == ''){
+            zip.file(`${i}.doc`, report);
+          }
+          else{
+            let name = this.form.exportWordName.replace(/\*(.*?)\*/g,(word,matchWord,index)=>{
+              let val = item[trimAll(matchWord)];
+              val = val == null ? '' : val;
+              return val;
+            });
+            //console.log(name)
+            zip.file(`${name}.doc`, report);
+          }
+          this.percentage = Math.floor(i/(persons.length-1)*100);
+        }
+
+        setTimeout(()=>{
+          //生成压缩包
+          zip.generateAsync({type:"blob"}).then((content)=>{
+            const url = window.URL.createObjectURL(content);
+            this.$refs.downloadURL.innerHTML = `<a href="${url}" download="下载.zip" style="margin-right:20px;">下载</a>`;
+            saveAs(content, "下载.zip");
+          });
+        },1000)
+      }catch(err){
+        alert('Error:'+err.message);
       }
-      //生成压缩包
-      zip.generateAsync({type:"blob"}).then((content)=>{
-        const url = window.URL.createObjectURL(content);
-        this.$refs.downloadURL.innerHTML = `<a href="${url}" download="下载.zip">下载</a>`;
-        saveAs(content, "example.zip");
-      });
     },
   },
   components: {
