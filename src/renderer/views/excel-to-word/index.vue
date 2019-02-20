@@ -13,7 +13,7 @@
           action="string"
           :show-file-list="false"
           :http-request="uploadExcel"
-          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel,.xlsx">
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel,.xlsx,.xls">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em><br />只能上传Excel文件</div>
         </el-upload>
@@ -26,7 +26,7 @@
           action="string"
           :show-file-list="false"
           :http-request="uploadWord"
-          accept="application/msword,application/msword,.docx">
+          accept="application/msword,application/msword,.docx,.doc">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em><br />只能上传Word文件</div>
         </el-upload>
@@ -84,7 +84,8 @@ export default {
       });
     },
     async uploadExcel(item){
-      this.form.excel = await this.readFileIntoArrayBuffer(item.file);
+      //this.form.excel = await this.readFileIntoArrayBuffer(item.file);
+      this.form.excel = item.file.path;//路径
     },
     async uploadWord(item){
       //this.form.word = await this.readFileIntoArrayBuffer(item.file);//有时报错待查
@@ -129,7 +130,7 @@ export default {
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       );*/
       try{
-        let workbook = XLSX.read(this.form.excel, {type: 'buffer'});
+        let workbook = XLSX.read(this.form.excel, {type: 'file'});
         let fromTo = '';
         let persons = [];
         for (let sheet in workbook.Sheets) {
