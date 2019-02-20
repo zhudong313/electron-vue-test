@@ -1,0 +1,9 @@
+@import './variable.scss';
+/*重置*/
+html,body,section,div,h1,h2,h3,h5,h6,header,main,footer,p,form,table,tr,td,th,tbody,thead,tfoot,dl,dt,dd,ul,li,a,img,span,em,i,strong,b,input,textarea,select,label{ margin:0; padding:0; }
+input,textarea{ resize:none; font-size:$fontsize; }
+li{ list-style: none; }
+a{ color: $color_link; text-decoration:none; }
+a:hover{ color: $color_hover; text-decoration: none; }
+body{ background: $bg_body; font-size:$fontsize;  }
+[v-cloak] { display: none; }

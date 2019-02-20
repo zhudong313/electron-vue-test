@@ -1,0 +1,47 @@
+$color: #3e4c67;//重要文字，用于标题/段落
+$color_link: #5c6d8c;//次要文字，用于描述信息/辅助标签等
+$color_hover: #0e81ff;//辅助色，用于可以点击的文字/按钮/ICON
+$color_line: #d9e0e3;//描边、分割线
+
+$color_yellow: #FFA127;//黄
+$color_red: #E72B2B;//红
+$color_green: #1BB110;//绿
+$color_blue: $color_hover;//常用按钮背景底色，或文字色
+$color_gray:#7485A9;//蓝灰
+$color_lightblue: #f7f9fb;//浅蓝
+
+$color_blue_bg: #D8EBFF;//常用按钮背景底色
+$color_yellow_bg: #FDE6C7;//警告色底色
+$color_green_bg: #D5F9D3;
+$color_red_bg: #fddbdb;
+$color_gray_bg: #e2e2e2;
+
+$color_border:#A3AEB4; //模态框中输入框边框色
+$color_border_hover:$color_hover; //边框鼠标移上去
+
+$color_shadow:#E5EAED;//阴影颜色
+
+$color_dialog_label:#5C6D8C;//对话框key样式
+
+$color_dialog_header:#e3f1ff;//模态框头部颜色
+
+$color_dialog_x:#53627b;//模态框头x颜色
+
+$color_table_hover: rgba(23,114,193,0.3);//表格hover背景色
+
+$color_filter: #F2F5F7;
+
+$bg_body: #f2f5f7;//右侧背景底色
+$bg_header: #fff;
+
+$fontsize: 14px;
+
+$font_family:  "Segoe UI","Helvetica","HelveticaNeue", "Arial","microsoft yahei","Sans Serif";
+
+$button_shadow: 0 2px 4px 0 rgba(16,31,50,0.3);
+
+$button_shadow_model: 0 2px 4px 0 rgba(32, 66, 73, 0.5);
+
+$table_shadow: 0 3px 6px 4px rgba(229,234,237,0.3);
+
+$table_shadow_hover: 0 2px 4px 0 rgba(193, 196, 200, 0.47);//表格hover
