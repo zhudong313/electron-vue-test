@@ -17,7 +17,7 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "electron-vue-test",
+    "productName": "zddSoftware",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"

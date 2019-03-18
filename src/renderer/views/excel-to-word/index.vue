@@ -18,6 +18,7 @@
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em><br />只能上传Excel文件</div>
         </el-upload>
         <div v-else><i class="el-icon-success"></i></div>
+        <a href="/static/excel-to-word/table.xls" download="数据.xls">Excel示例</a>
       </el-form-item>
       <el-form-item label="Word模板：">
         <el-upload
@@ -31,6 +32,7 @@
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em><br />只能上传Word文件</div>
         </el-upload>
         <div v-else><i class="el-icon-success"></i></div>
+        <a href="/static/excel-to-word/myTemplate.docx" download="模板.docx">Word示例</a>
       </el-form-item>
       <el-form-item label="导出Word命名：" v-if="form.excel && form.word">
         <el-popover trigger="hover" content="规则：例*字段名**字段名*，即以*字段*包裹；如空值，则按系统默认规则。" placement="top">
